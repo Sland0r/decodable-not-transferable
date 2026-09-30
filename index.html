@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="Alessio Colombo, May Lee, Elyanne Oey, Isabelle A. Kampono, Stipe Frkovic, Dheeraj Varghese, Cees G. M. Snoek">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Decodable, Not Transferable: Latent Actions Across Worlds</title>
+  <meta name="description" content="Latent action models encode which action was taken, but the latent-to-action mapping does not transfer to unseen games. NeurIPS 2026 Workshop (PTA).">
+
+  <!-- Social previews. After deploying, set og:url / og:image to absolute URLs. -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Decodable, Not Transferable: Latent Actions Across Worlds">
+  <meta property="og:description" content="Action information in latent action models is decodable inside a known game, but a probe fitted on seen games does not transfer to unseen ones.">
+  <meta property="og:image" content="static/images/social.png">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="static/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Silkscreen&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+
+<!-- ───────────────────────── Sticky nav ───────────────────────── -->
+<nav class="topnav" id="topnav" aria-label="Sections">
+  <div class="topnav-inner">
+    <a href="#top" class="topnav-title">Decodable, <span class="accent">Not Transferable</span></a>
+    <div class="topnav-links">
+      <a href="#overview">Overview</a>
+      <a href="#setup">Setup</a>
+      <a href="#q1">Q1</a>
+      <a href="#q2">Q2</a>
+      <a href="#q3">Q3</a>
+      <a href="#takeaways">Takeaways</a>
+      <a href="#citation">Cite</a>
+    </div>
+  </div>
+  <div class="progress" id="progress"></div>
+</nav>
+
+<!-- ───────────────────────── Hero ───────────────────────── -->
+<header class="hero" id="top">
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="wrap hero-inner">
+    <p class="venue"><span class="pixel">NeurIPS 2026 Workshop</span><span class="venue-sep">·</span>PTA: From Pretrained Representations to Acting Agents</p>
+
+    <h1 class="title">
+      Decodable, <span class="accent">Not&nbsp;Transferable</span>
+      <span class="subtitle">Latent Actions Across Worlds</span>
+    </h1>
+
+    <div class="authors">
+      <span class="author">Alessio Colombo</span>
+      <span class="author">May Lee</span>
+      <span class="author">Elyanne Oey</span>
+      <span class="author">Isabelle A. Kampono</span>
+      <span class="author">Stipe Frkovic</span>
+      <span class="author">Dheeraj Varghese</span>
+      <span class="author">Cees G. M. Snoek</span>
+    </div>
+    <div class="affils">
+      <span>University of Amsterdam</span>
+    </div>
+
+    <div class="links">
+      <a class="btn btn-primary" href="static/paper.pdf" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>
+        Paper
+      </a>
+      <!-- TODO: add the arXiv link and remove the "is-soon" class -->
+      <a class="btn is-soon" href="#" aria-disabled="true" title="Coming soon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8l8 8M16 8l-8 8"/></svg>
+        arXiv <span class="soon">soon</span>
+      </a>
+      <!-- TODO: add the code link and remove the "is-soon" class -->
+      <a class="btn is-soon" href="#" aria-disabled="true" title="Coming soon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3.1-.3 6.4-1.5 6.4-7a5.4 5.4 0 0 0-1.5-3.8 5 5 0 0 0-.1-3.8s-1.2-.3-3.9 1.5a13.4 13.4 0 0 0-7 0C6.3 1.6 5.1 2 5.1 2a5 5 0 0 0-.1 3.8A5.4 5.4 0 0 0 3.5 9.6c0 5.4 3.3 6.6 6.4 7a3.4 3.4 0 0 0-.9 2.6V22"/></svg>
+        Code <span class="soon">soon</span>
+      </a>
+      <a class="btn" href="#citation">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h4v4H8a3 3 0 0 0 3 3v3a6 6 0 0 1-6-6V9a2 2 0 0 1 2-2zm9 0h4v4h-3a3 3 0 0 0 3 3v3a6 6 0 0 1-6-6V9a2 2 0 0 1 2-2z"/></svg>
+        BibTeX
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ───────────────────────── TL;DR + teaser ───────────────────────── -->
+<section class="section tldr-section" id="overview">
+  <div class="wrap">
+    <div class="tldr">
+      <span class="tag">TL;DR</span>
+      <p>Latent action models <strong>do</strong> encode which action was taken, and a probe can read it out inside games it was trained on. But the mapping from latent to action <strong>does not carry over to new games</strong>: the same probe drops toward the majority-class baseline on games it has never seen. The strongest within-game action signal comes from a generic video tokenizer, not from either latent action model.</p>
+    </div>
+
+    <figure class="figure teaser">
+      <div class="chart-head">
+        <div>
+          <h2 class="chart-title">Action signal exists, but not as a reusable primitive</h2>
+          <p class="chart-sub">Retro action accuracy (%) for three encoders, 4 classes. Hover a bar for details.</p>
+        </div>
+        <div class="legend" id="ladder-legend"></div>
+      </div>
+      <div class="ladder" id="ladder" role="img" aria-label="Grouped bar charts for Q1, Q2 and Q3. Q1: null-transition latents sit at about 30% for every encoder, real latents reach 45, 50 and 67%. Q2, seen games: linear 45, 50, 67%; MLP-2 71, 75, 83%. Q3, unseen games: linear 42, 45, 53%; MLP-2 41, 41, 51%."></div>
+      <figcaption>
+        <b>Q1</b> Probes trained on real latents beat probes trained on <em>null transitions</em> (two identical frames), so action information is present.
+        <b>Q2</b> Inside the 154 training games, a deeper probe (MLP-2) decodes actions far better than a linear one.
+        <b>Q3</b> The <em>same fitted probes</em>, scored on 39 games held out entirely, lose everything that depth bought.
+        The grey band is the majority-class baseline of the two test sets (29.5–31.0%).
+      </figcaption>
+    </figure>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">193</div>
+        <div class="stat-label">retro platformer games, with four controller actions: <i>right</i>, <i>left</i>, <i>crouch</i>, <i>jump</i></div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">−30<span class="stat-unit">&nbsp;to&nbsp;</span>−33</div>
+        <div class="stat-label">points of MLP-2 action accuracy lost when moving from seen to unseen games</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">98.7–99.2<span class="stat-unit">%</span></div>
+        <div class="stat-label">game identity accuracy from latents, even when <em>no action</em> is taken (null transitions)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">1.18–1.38</div>
+        <div class="stat-label">entanglement ratio: changing the game moves a latent more than changing the action does</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────── Abstract ───────────────────────── -->
+<section class="section" id="abstract">
+  <div class="wrap narrow">
+    <h2 class="section-title"><span class="kicker pixel">Abstract</span></h2>
+    <p class="abstract">
+      Latent action models aim to make unlabeled video useful for learning controllable world models by inferring latent actions from visual transitions. For these latents to serve as reusable action representations, however, their semantics must remain consistent across changes in visual context and environment. We ask what action-related structure can be identified in pretrained latent action model representations, and whether this structure can support action prediction in known and unknown environments. We answer it as three nested questions: (i) how is action information encoded in the latents, (ii) is it decodable into actions inside a seen environment, and (iii) does the same decoder transfer to an environment never seen during probe fitting? We evaluate two recent latent action models, AdaWorld and Olaf-World, on a 193-game Stable Retro corpus and a subset of Open Pixels2Play. We find that action-label information is present, but it is weakly linearly separable and entangled with game-related variation. There is a substantial drop in action prediction performance on unseen environments compared to known environments. Moreover, a generic video tokenizer carries the strongest within-game action signal of any representation we test, suggesting that such decodability may reflect generic visual dynamics rather than an action-specific inductive bias of latent action models.
+    </p>
+  </div>
+</section>
+
+<!-- ───────────────────────── Motivation ───────────────────────── -->
+<section class="section alt" id="motivation">
+  <div class="wrap">
+    <div class="narrow">
+      <h2 class="section-title"><span class="kicker pixel">Motivation</span>What should a latent action be?</h2>
+      <p>
+        World models predict what happens next, given what an agent does. Most of them need <em>action labels</em>, which rules out the huge amount of video on the internet that has none.
+        <strong>Latent action models</strong> (LAMs) such as Genie, LAPA, AdaWorld and Olaf-World get around this. They look at two frames, compress the visual change into a small latent vector, and use that vector in place of the missing action.
+      </p>
+    </div>
+
+    <figure class="figure figure-plain">
+      <img src="static/images/lam_pipeline.webp" alt="Pipeline: two frames f_t and f_t+1 go into a latent action model, which extracts a 32-dimensional latent action; a world model uses f_t and the latent action to predict f_t+1." width="924" height="332" loading="lazy">
+      <figcaption>A latent action model infers a compact latent (here 32-d) from a pair of frames. A world model then predicts the next frame from the current frame and that latent.</figcaption>
+    </figure>
+
+    <div class="narrow">
+      <p>
+        These latents are often described as <em>action primitives</em>. If that is true, a latent for <span class="chip chip-left">move left</span> should mean the same thing whatever the character, background, camera or game.
+        We call this the <strong>atomic-action hypothesis</strong> and test it in video games, where we know the true action and can watch it being repeated across very different worlds.
+      </p>
+    </div>
+
+    <h3 class="ladder-title">Three nested questions</h3>
+    <ol class="qladder">
+      <li class="q">
+        <span class="q-id pixel">Q1</span>
+        <h4>How is action information encoded in the latents?</h4>
+        <p class="q-answer"><span class="verdict v-partial">Present, but weak</span> The signal is real but only weakly linearly separable, and it is mixed in with information about the game.</p>
+        <a href="#q1" class="q-link">Read Q1 →</a>
+      </li>
+      <li class="q">
+        <span class="q-id pixel">Q2</span>
+        <h4>Is it decodable into actions inside a <em>known</em> environment?</h4>
+        <p class="q-answer"><span class="verdict v-yes">Yes</span> Probes clear the baseline for every encoder, and deeper probes add 16–25 points.</p>
+        <a href="#q2" class="q-link">Read Q2 →</a>
+      </li>
+      <li class="q">
+        <span class="q-id pixel">Q3</span>
+        <h4>Does the same decoder transfer to an <em>unseen</em> environment?</h4>
+        <p class="q-answer"><span class="verdict v-no">Largely no</span> MLP-2 probes lose 30–33 points, and linear probes stay only modestly above chance.</p>
+        <a href="#q3" class="q-link">Read Q3 →</a>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ───────────────────────── Setup ───────────────────────── -->
+<section class="section" id="setup">
+  <div class="wrap">
+    <div class="narrow">
+      <h2 class="section-title"><span class="kicker pixel">Setup</span>Three encoders, two game corpora, simple probes</h2>
+      <p>We freeze each pretrained encoder, extract a latent for every transition, and train small <em>probes</em> on top to predict the action. A probe is either linear (<span class="mono">MLP-0</span>) or a small MLP with one or two hidden layers (<span class="mono">MLP-1</span>, <span class="mono">MLP-2</span>).</p>
+    </div>
+
+    <h3 class="sub">Encoders</h3>
+    <div class="cards cards-3">
+      <article class="card model" style="--c: var(--ada)">
+        <header><span class="dot"></span><h4>AdaWorld</h4><span class="badge">LAM</span></header>
+        <p>A Transformer autoencoder trained with a β-VAE objective. It compresses the change between two frames into a latent that a decoder uses to predict the second frame.</p>
+        <dl>
+          <div><dt>Latent</dt><dd>32-d, continuous</dd></div>
+          <div><dt>Input</dt><dd>2 frames · 256×256</dd></div>
+          <div><dt>Size</dt><dd>~500M params</dd></div>
+        </dl>
+      </article>
+      <article class="card model" style="--c: var(--olaf)">
+        <header><span class="dot"></span><h4>Olaf-World</h4><span class="badge">LAM</span></header>
+        <p>Adds <b>Seq∆-REPA</b>, which aligns sequence-averaged latent actions with temporal feature differences from a frozen V-JEPA 2 encoder. The goal is consistent action meaning across visual contexts.</p>
+        <dl>
+          <div><dt>Latent</dt><dd>32-d, continuous</dd></div>
+          <div><dt>Input</dt><dd>2 frames · causal attention</dd></div>
+          <div><dt>Size</dt><dd>~500M params</dd></div>
+        </dl>
+      </article>
+      <article class="card model" style="--c: var(--vft)">
+        <header><span class="dot"></span><h4>VideoFlexTok</h4><span class="badge badge-ghost">tokenizer</span></header>
+        <p>A general-purpose video tokenizer with <b>no action objective</b> at all. We repurpose it as a LAM by taking the latent frame aligned with the four action frames: up to 256 coarse-to-fine tokens × 6 channels.</p>
+        <dl>
+          <div><dt>Latent</dt><dd>1536-d (256×6) or 192-d</dd></div>
+          <div><dt>Input</dt><dd>17 frames · 256×256</dd></div>
+          <div><dt>Size</dt><dd>286.7M params</dd></div>
+        </dl>
+      </article>
+    </div>
+
+    <h3 class="sub">Datasets</h3>
+    <div class="cards cards-2">
+      <article class="card data">
+        <header><h4>Retro <span class="muted">· our corpus</span></h4></header>
+        <p>We collected 193 2D platformers using <a href="https://github.com/Farama-Foundation/stable-retro" target="_blank" rel="noopener">Stable Retro</a>: 98 NES, 63 SNES, 24 Master System, 7 Game Boy and 1 Atari 2600 title. Each game has 20 rollouts of 4,000 steps from a scripted controller. The task is a <b>4-way classification</b> over <i>right</i>, <i>left</i>, <i>crouch</i> and <i>jump</i>.</p>
+        <div class="pills"><span>193 games</span><span>4 actions</span><span>20 × 4,000-step rollouts / game</span></div>
+      </article>
+      <article class="card data">
+        <header><h4>Open Pixels2Play <span class="muted">· P2P subset</span></h4></header>
+        <p>Gameplay video from 3D games with keyboard labels. Several keys can be held at once, so the task is <b>multi-label</b> over 10 keys. We use the 291 sessions captured at 640×480 and split them 80/20. VideoFlexTok is not evaluated here because it needs multi-frame clips.</p>
+        <div class="pills"><span>15 games</span><span>10 keys</span><span>999,720 pairs</span></div>
+      </article>
+    </div>
+
+    <div class="split">
+      <figure class="figure figure-plain">
+        <img src="static/images/data_sampling.webp" alt="One Retro data point: 16 no-action frames followed by 4 frames holding a single action." width="868" height="396" loading="lazy">
+        <figcaption><b>Isolating one action.</b> In each 20-frame cycle, the controller idles for 16 frames and then holds one random action for 4. This makes the visual change easy to attribute to a single action.</figcaption>
+      </figure>
+      <figure class="figure figure-plain">
+        <img src="static/images/videoflextok.webp" alt="VideoFlexTok repurposed: from a 17-frame clip, only the latent frame aligned with the 4 action frames is kept, as up to 256 tokens." width="960" height="540" loading="lazy">
+        <figcaption><b>Repurposing a tokenizer.</b> VideoFlexTok encodes a 17-frame clip. We keep only the latent frame aligned with the 4 action frames and discard the rest.</figcaption>
+      </figure>
+    </div>
+
+    <div class="narrow">
+      <div class="callout">
+        <h4>Two controls that keep us honest</h4>
+        <ul>
+          <li><b>Null transitions.</b> We feed the encoder two <em>identical</em> frames, so no transition is present. Any action accuracy a probe gets from these latents is a floor that comes from things other than the action.</li>
+          <li><b>Held-out games.</b> We hold out 39 of the 193 Retro games entirely. One probe is fitted on 80% of the samples from the other 154 games and then scored twice: <em>within</em> (the remaining 20% of the 154 games) and <em>cross</em> (all samples from the 39 unseen games). Both scores come from the same weights.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────── Q1 ───────────────────────── -->
+<section class="section alt" id="q1">
+  <div class="wrap">
+    <div class="narrow">
+      <h2 class="section-title"><span class="kicker pixel">Q1</span>How is action information encoded?</h2>
+      <p class="lede">Action information is there, but as a thin, overlapping residual on top of a description of the scene.</p>
+    </div>
+
+    <div class="findings">
+      <div class="finding">
+        <span class="finding-n">1</span>
+        <div>
+          <h4>The action signal is real</h4>
+          <p>Probes on null-transition latents fall to the majority baseline (~30%) at every depth and for every encoder. Game identity is <em>not</em> affected (98.7–99.2%). Only the action information disappears, and real latents beat the floor for all three encoders.</p>
+        </div>
+      </div>
+      <div class="finding">
+        <span class="finding-n">2</span>
+        <div>
+          <h4>Latents mostly describe the scene</h4>
+          <p>A few directions carry almost all the variance: <b>4 of 32</b> dimensions for AdaWorld and <b>16 of 32</b> for Olaf-World. On null pairs, where nothing happens, this structure is already there, and a real transition adds only two or three directions.</p>
+        </div>
+      </div>
+      <div class="finding">
+        <span class="finding-n">3</span>
+        <div>
+          <h4>No coordinate separates the actions</h4>
+          <p>The best single coordinate's Fisher ratio is far below 1 for every encoder. The four action centroids are 0.22–0.43 apart, much closer than two samples that differ only in action (0.80 for AdaWorld, 1.07 for Olaf-World). The classes are <em>nested</em> rather than side by side, so no hyperplane can separate them cleanly.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><b>Table 1.</b> The action signal is above the null-transition floor, but no single latent coordinate captures it. Accuracy is on Retro (%).</caption>
+        <thead>
+          <tr><th></th><th class="c-ada">AdaWorld</th><th class="c-olaf">Olaf-World</th><th class="c-vft">VideoFlexTok</th></tr>
+        </thead>
+        <tbody>
+          <tr class="dim"><th>Null transition, linear</th><td>30.3</td><td>30.4</td><td>30.4</td></tr>
+          <tr class="dim"><th>Null transition, MLP-2</th><td>30.6</td><td>30.6</td><td>29.3</td></tr>
+          <tr class="hl"><th>Real latent, linear</th><td>45.1</td><td>48.7</td><td>65.6</td></tr>
+          <tr><th>Best-coordinate Fisher ratio <span class="hint" data-tip="σ²between / σ²within over the four action classes for the single best latent dimension. F ≫ 1 would mean an axis that separates actions.">?</span></th><td>0.097</td><td>0.132</td><td>0.401</td></tr>
+          <tr><th>Action centroid distances (min–max)</th><td>0.22–0.42</td><td>0.25–0.43</td><td class="na">—</td></tr>
+          <tr><th>PCA components for 99% variance</th><td>4 / 32</td><td>16 / 32</td><td>1218 / 1536</td></tr>
+          <tr class="dim"><th>… same, null transition</th><td>1 / 32</td><td>14 / 32</td><td>1180 / 1536</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="narrow">
+      <h3 class="sub">Is the action signal just hidden in superposition?</h3>
+      <p>
+        One explanation is that the action information is there but spread across many dimensions, so no single coordinate captures it. To test this, we train <strong>top-k sparse autoencoders</strong> (SAEs) on the latents and look for individual sparse features that select for actions. Game identity serves as a positive control.
+      </p>
+    </div>
+
+    <figure class="figure">
+      <img src="static/images/fig2_sae_fisher.webp" alt="Fisher discriminant along the SAE top-k sweep for AdaWorld and Olaf-World. Game Fisher (blue) climbs with k and passes its raw reference; action Fisher (red) stays near zero at every k." width="1800" height="666" loading="lazy">
+      <figcaption><b>SAEs find features for games, but not for actions.</b> The plot shows the Fisher discriminant of the best feature and of the top-10 mean for game labels (blue) and action labels (red) as <i>k</i> increases. Game Fisher rises past its raw-latent reference (dotted) for both LAMs. Action Fisher stays near zero at every <i>k</i> and peaks at 0.071. Linear action accuracy on the SAE codes is also flat in <i>k</i>. This suggests there is little extra linearly recoverable action structure to find.</figcaption>
+    </figure>
+
+    <details class="more">
+      <summary>More detail: PCA spectra and SAE probe sweeps</summary>
+      <div class="more-body">
+        <figure class="figure figure-plain">
+          <img src="static/images/pca_variance.webp" alt="Cumulative PCA explained variance: AdaWorld saturates at 4 components, Olaf-World around 16, VideoFlexTok needs over a thousand (1218 of 1536) for 99%." width="1800" height="900" loading="lazy">
+          <figcaption>Cumulative explained variance for AdaWorld (top left), Olaf-World (top right), VideoFlexTok 256×6 (bottom left) and 32×6 (bottom right). The two LAMs are low-rank on both corpora. VideoFlexTok is not.</figcaption>
+        </figure>
+        <div class="tabs" data-tabs>
+          <div class="seg" role="tablist" aria-label="SAE probe sweeps">
+            <button role="tab" aria-selected="true" data-tab="sae-ada">AdaWorld</button>
+            <button role="tab" aria-selected="false" data-tab="sae-olaf">Olaf-World</button>
+            <button role="tab" aria-selected="false" data-tab="sae-vft">VideoFlexTok</button>
+          </div>
+          <figure class="figure figure-plain tab-panel" id="sae-ada">
+            <img src="static/images/sae_probe_adaworld.webp" alt="AdaWorld SAE probe accuracy per top-k" width="1200" height="750" loading="lazy">
+            <figcaption>AdaWorld (F = 256 over 32-d). Game accuracy climbs with <i>k</i>. Action accuracy stays flat at its raw reference.</figcaption>
+          </figure>
+          <figure class="figure figure-plain tab-panel" id="sae-olaf" hidden>
+            <img src="static/images/sae_probe_olafworld.webp" alt="Olaf-World SAE probe accuracy per top-k" width="1200" height="750" loading="lazy">
+            <figcaption>Olaf-World (F = 256 over 32-d). Game accuracy climbs from 8.5% at <i>k</i>=1 to 92.6% at <i>k</i>=32 and crosses its raw reference. Action accuracy stays flat.</figcaption>
+          </figure>
+          <figure class="figure figure-plain tab-panel" id="sae-vft" hidden>
+            <img src="static/images/sae_probe_videoflextok_192.webp" alt="VideoFlexTok SAE probe accuracy per top-k" width="1200" height="750" loading="lazy">
+            <figcaption>VideoFlexTok (F = 512 over 192-d). Game accuracy is already saturated at 94.3% with a single feature. Action accuracy meets and then exceeds its raw reference from <i>k</i>=8.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ───────────────────────── Q2 ───────────────────────── -->
+<section class="section" id="q2">
+  <div class="wrap">
+    <div class="narrow">
+      <h2 class="section-title"><span class="kicker pixel">Q2</span>Is it decodable inside a known environment?</h2>
+      <p class="lede">Yes, at every probe depth we test. Nonlinear probes help a lot, which is what you would expect when the action classes are nested.</p>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table bars">
+        <caption><b>Table 2.</b> Within-environment probe results. The pooled probe is trained on all games and tested on a random 80/20 split.</caption>
+        <thead>
+          <tr><th></th><th class="c-ada">AdaWorld</th><th class="c-olaf">Olaf-World</th><th class="c-vft">VideoFlexTok</th></tr>
+        </thead>
+        <tbody>
+          <tr class="group"><th colspan="4">Retro · action accuracy <span class="muted">(majority baseline 30.6–31.0%)</span></th></tr>
+          <tr><th>Linear</th><td data-v="45.1">45.1%</td><td data-v="48.7">48.7%</td><td data-v="65.6">65.6%</td></tr>
+          <tr><th>MLP-1</th><td data-v="57.5">57.5%</td><td data-v="64.5">64.5%</td><td data-v="82.1">82.1%</td></tr>
+          <tr class="hl"><th>MLP-2</th><td data-v="70.4">70.4%</td><td data-v="73.9">73.9%</td><td data-v="82.2">82.2%</td></tr>
+          <tr class="group"><th colspan="4">Retro · game accuracy <span class="muted">(193 classes)</span></th></tr>
+          <tr><th>Linear</th><td data-v="75.8">75.8%</td><td data-v="83.8">83.8%</td><td data-v="99.2">99.2%</td></tr>
+          <tr><th>MLP-2</th><td data-v="98.2">98.2%</td><td data-v="98.4">98.4%</td><td data-v="99.2">99.2%</td></tr>
+          <tr class="dim"><th>Null transition, MLP-2</th><td data-v="98.7">98.7%</td><td data-v="98.8">98.8%</td><td data-v="99.2">99.2%</td></tr>
+          <tr class="group"><th colspan="4">P2P · multi-label, 10 keys</th></tr>
+          <tr><th>Exact match, linear</th><td data-v="26.0">26.0%</td><td data-v="43.9">43.9%</td><td class="na">—</td></tr>
+          <tr class="hl"><th>Exact match, MLP-2</th><td data-v="56.8">56.8%</td><td data-v="63.9">63.9%</td><td class="na">—</td></tr>
+          <tr><th>Micro F1, linear</th><td>0.429</td><td>0.615</td><td class="na">—</td></tr>
+          <tr><th>Macro F1, linear</th><td>0.226</td><td>0.434</td><td class="na">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="findings findings-2">
+      <div class="finding">
+        <span class="finding-n">!</span>
+        <div>
+          <h4>Averages hide big differences between games</h4>
+          <p>Fitting one probe per game, accuracy ranges from that game's majority baseline up to 100% for every encoder. On P2P, per-key F1 roughly follows how often the key appears. Rare keys score near zero with a linear probe but improve with depth, so the information is there even when a linear probe misses it.</p>
+        </div>
+      </div>
+      <div class="finding">
+        <span class="finding-n">!</span>
+        <div>
+          <h4>Pooled decoding ≠ a shared action code</h4>
+          <p>Game identity can be read linearly from the same latents (75.8–99.2%). A probe trained on all games can therefore first work out <em>which game</em> it is looking at and then apply a game-specific rule. The pictures below show exactly this.</p>
+        </div>
+      </div>
+    </div>
+
+    <figure class="figure">
+      <img src="static/images/fig3_umap.webp" alt="UMAP of VideoFlexTok latents: (a) ten tight islands, one per game; (b) the same islands colored by action, with no action holding its own region; (c) a single game where actions separate." width="1800" height="614" loading="lazy">
+      <figcaption><b>Actions separate inside a game, but not across games.</b> UMAP of VideoFlexTok latents on Retro. (a) and (b) show the same embedding coloured twice. The ten islands are the ten games, and no action colour has a region of its own across them. (c) For a single game, the actions become much easier to separate.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ───────────────────────── Explorer ───────────────────────── -->
+<section class="section alt" id="explorer">
+  <div class="wrap">
+    <div class="narrow">
+      <h2 class="section-title"><span class="kicker pixel">Explore</span>Colour the latent space yourself</h2>
+      <p>Each view is one UMAP embedding of Retro latents from 10 games. Switch the colouring between <b>game</b> and <b>action</b>: the points stay where they are, and only the labels change. Every encoder groups by game.</p>
+    </div>
+
+    <div class="explorer" id="umap-explorer">
+      <div class="explorer-controls">
+        <div class="control">
+          <span class="control-label">Encoder</span>
+          <div class="seg" role="radiogroup" aria-label="Encoder">
+            <button role="radio" aria-checked="true" data-enc="adaworld">AdaWorld</button>
+            <button role="radio" aria-checked="false" data-enc="olafworld">Olaf-World</button>
+            <button role="radio" aria-checked="false" data-enc="videoflextok">VideoFlexTok</button>
+          </div>
+        </div>
+        <div class="control">
+          <span class="control-label">Colour by</span>
+          <div class="seg" role="radiogroup" aria-label="Colour by">
+            <button role="radio" aria-checked="true" data-color="games">Game</button>
+            <button role="radio" aria-checked="false" data-color="actions">Action</button>
+          </div>
+        </div>
+      </div>
+      <div class="explorer-body">
+        <div class="explorer-stage" id="umap-stage">
+          <img class="umap-img is-on" alt="" width="1200" height="900">
+          <img class="umap-img" alt="" width="1200" height="900">
+        </div>
+        <aside class="explorer-legend" id="umap-legend" aria-live="polite"></aside>
+      </div>
+      <p class="explorer-note" id="umap-note"></p>
+    </div>
+
+    <div class="narrow">
+      <h3 class="sub">Zooming into single games</h3>
+      <p>Inside one game, the structure varies a lot. In some games the actions form partial clusters, and in others they barely separate. Both panels show VideoFlexTok latents coloured by action.</p>
+    </div>
+    <div class="split">
+      <figure class="figure figure-plain pergame">
+        <div class="chart pergame-plot" data-pergame="jetsonsinvasionoftheplanetpirates" data-label="Per-game UMAP of The Jetsons: Invasion of the Planet Pirates, 52 samples coloured by action: jump separates cleanly, crouch has its own region, left and right interleave."></div>
+        <figcaption><b>The Jetsons: Invasion of the Planet Pirates</b> <span class="muted">(SNES, 52 samples)</span>. There is some clustering: <i>jump</i> is cleanly separated, <i>crouch</i> has its own region, and <i>left</i>/<i>right</i> are mixed together.</figcaption>
+      </figure>
+      <figure class="figure figure-plain pergame">
+        <div class="chart pergame-plot" data-pergame="joeandmac" data-label="Per-game UMAP of Joe and Mac, 72 samples coloured by action, with no clear action clustering."></div>
+        <figcaption><b>Joe &amp; Mac</b> <span class="muted">(NES, 72 samples)</span>. There is no clear action clustering, and the classes overlap heavily. Hover a point to highlight its action.</figcaption>
+      </figure>
+    </div>
+    <div class="legend legend-center" id="action-legend-static"></div>
+  </div>
+</section>
+
+<!-- ───────────────────────── Q3 ───────────────────────── -->
+<section class="section" id="q3">
+  <div class="wrap">
+    <div class="narrow">
+      <h2 class="section-title"><span class="kicker pixel">Q3</span>Does the decoder transfer to unseen games?</h2>
+      <p class="lede">No. The extra capacity that helps inside the training games hurts on games the probe has never seen.</p>
+    </div>
+
+    <figure class="figure">
+      <div class="chart-head">
+        <div>
+          <h3 class="chart-title">Accuracy from seen games to unseen games</h3>
+          <p class="chart-sub">One fitted probe per line, scored on held-back samples from its 154 training games and on 39 games it has never seen.</p>
+        </div>
+        <div class="legend" id="slope-legend"></div>
+      </div>
+      <div class="slopes" id="slopes" role="img" aria-label="Slope charts. Linear probe: AdaWorld 45.3 to 42.2, Olaf-World 49.5 to 45.0, VideoFlexTok 66.5 to 53.2. MLP-2 probe: AdaWorld 71.1 to 40.8, Olaf-World 74.5 to 41.3, VideoFlexTok 82.6 to 50.9."></div>
+      <figcaption>With a linear probe, the drop is 3–13 points. With MLP-2, it is 30–33 points for every encoder, and MLP-2 does <em>worse</em> than the linear probe on unseen games. The grey band is the majority-class baseline (29.4–31.1%).</figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table class="data-table delta">
+        <caption><b>Table 3.</b> Action accuracy (%) inside the training games does not carry over to unseen games. ∆ is the cost of never having seen the environment.</caption>
+        <thead>
+          <tr><th></th><th>Within <span class="muted">(154 games)</span></th><th>Cross <span class="muted">(39 unseen)</span></th><th>∆</th></tr>
+        </thead>
+        <tbody>
+          <tr class="group"><th colspan="4">Linear probe</th></tr>
+          <tr><th><span class="dot" style="--c:var(--ada)"></span>AdaWorld</th><td>45.3</td><td>42.2</td><td class="neg" style="--d:3.0">−3.0</td></tr>
+          <tr><th><span class="dot" style="--c:var(--olaf)"></span>Olaf-World</th><td>49.5</td><td>45.0</td><td class="neg" style="--d:4.5">−4.5</td></tr>
+          <tr><th><span class="dot" style="--c:var(--vft)"></span>VideoFlexTok</th><td>66.5</td><td>53.2</td><td class="neg" style="--d:13.3">−13.3</td></tr>
+          <tr class="group"><th colspan="4">MLP-2 probe</th></tr>
+          <tr><th><span class="dot" style="--c:var(--ada)"></span>AdaWorld</th><td>71.1</td><td>40.8</td><td class="neg" style="--d:30.3">−30.3</td></tr>
+          <tr><th><span class="dot" style="--c:var(--olaf)"></span>Olaf-World</th><td>74.5</td><td>41.3</td><td class="neg" style="--d:33.1">−33.1</td></tr>
+          <tr><th><span class="dot" style="--c:var(--vft)"></span>VideoFlexTok</th><td>82.6</td><td>50.9</td><td class="neg" style="--d:31.7">−31.7</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="findings">
+      <div class="finding">
+        <span class="finding-n">1</span>
+        <div>
+          <h4>Depth learns game-specific rules</h4>
+          <p>Going from linear to MLP-2 adds 16–26 points inside the training games (tens of points for both LAMs) and <em>removes</em> points on held-out games for every encoder. The MLP appears to learn game-conditioned associations rather than a single rule that works in every environment.</p>
+        </div>
+      </div>
+      <div class="finding">
+        <span class="finding-n">2</span>
+        <div>
+          <h4>The failure is broad, not a few outliers</h4>
+          <p>Looking at each of the 39 held-out games, the median is close to the mean and the distribution is not bimodal. The probe beats most games' own majority class (85–95%), so it carries some information. It is still far from a usable control signal.</p>
+        </div>
+      </div>
+      <div class="finding">
+        <span class="finding-n">3</span>
+        <div>
+          <h4>Game dominates action in latent space</h4>
+          <p>We compare the distance between latents with the <em>same action in different games</em> to the distance between latents with <em>different actions in the same game</em>. The ratio is above 1 for every encoder on Retro, so changing the game moves the latent more than changing the action.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption><b>Table 4.</b> The cross-game gap is spread across the 39 held-out games (MLP-2 probe). The entanglement ratio is measured on the full corpus.</caption>
+        <thead>
+          <tr><th></th><th>Mean</th><th>Min–Max</th><th>Median</th><th>Games above baseline</th><th>Entanglement ratio <span class="hint" data-tip="Mean pairwise L2 distance of (same action, different game) divided by (different action, same game). Above 1 means the game moves the latent more than the action does.">?</span></th></tr>
+        </thead>
+        <tbody>
+          <tr><th><span class="dot" style="--c:var(--ada)"></span>AdaWorld</th><td>40.8</td><td>23.4–91.1</td><td>36.9</td><td>85%</td><td><b>1.18</b></td></tr>
+          <tr><th><span class="dot" style="--c:var(--olaf)"></span>Olaf-World</th><td>41.5</td><td>23.4–81.1</td><td>39.3</td><td>85%</td><td><b>1.34</b></td></tr>
+          <tr><th><span class="dot" style="--c:var(--vft)"></span>VideoFlexTok</th><td>51.3</td><td>28.7–96.4</td><td>49.6</td><td>95%</td><td><b>1.38</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="narrow">
+      <p class="note">
+        <b>Is it just frame spacing?</b> On Retro, the gap between the two frames depends on the action (11 frames for jump, 7 for left/right, 4 for crouch), which could give the probe an extra cue. We re-ran both LAMs with a fixed 4-frame spacing. The drop on unseen games remains: −23.9 (AdaWorld) and −25.1 (Olaf-World) points at MLP-2.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────── Takeaways ───────────────────────── -->
+<section class="section alt" id="takeaways">
+  <div class="wrap">
+    <div class="narrow">
+      <h2 class="section-title"><span class="kicker pixel">Takeaways</span>What this means for latent actions</h2>
+    </div>
+    <div class="takeaways">
+      <article class="take">
+        <span class="take-n pixel">01</span>
+        <h4>The atomic-action hypothesis holds within an environment and fails across environments</h4>
+        <p>All three representations contain an action signal (Q1), and it can be decoded wherever the probe has seen the environment (Q2). A single fitted mapping from latent to action does not carry over to a new environment (Q3). In these models, action information is environment-specific.</p>
+      </article>
+      <article class="take">
+        <span class="take-n pixel">02</span>
+        <h4>Evaluate on held-out environments</h4>
+        <p>Testing on held-out samples from <em>known</em> environments overstates how well a representation works as a transferable action interface. Probe capacity makes this worse. A linear probe gives the more honest estimate of what transfers.</p>
+      </article>
+      <article class="take">
+        <span class="take-n pixel">03</span>
+        <h4>Better within-game decoding doesn't close the transfer gap</h4>
+        <p>Olaf-World beats AdaWorld on every probe, yet it has the higher entanglement ratio and the larger MLP-2 drop on unseen games (−33.1 vs −30.3 points). The conclusion does not depend on which LAM is stronger.</p>
+      </article>
+      <article class="take">
+        <span class="take-n pixel">04</span>
+        <h4>The best action reader isn't a LAM</h4>
+        <p>VideoFlexTok has no inverse-dynamics objective and no action supervision, yet it decodes Retro actions better than either LAM at every probe depth. Objective, width, input window and training data are all confounded here, so we report this as an observation. A natural next step is to use VideoFlexTok latents as the alignment target for a LAM.</p>
+      </article>
+    </div>
+
+    <details class="more narrow">
+      <summary>Limitations</summary>
+      <div class="more-body">
+        <ul>
+          <li>We study two closely related LAMs, AdaWorld and Olaf-World, so our conclusions are specific to these models.</li>
+          <li>We test across video games on purpose. Whether the same findings hold in other action domains, such as robotics, is still open.</li>
+          <li>In Retro, a label like <i>jump</i> does not always produce the same visual transition across games or across states within a game, so each class contains a mix of visual effects.</li>
+          <li>Our default frame pairs use spacing that depends on the action class, which can give the probe an extra cue. The drop on unseen games persists under a fixed-spacing control. However, that control changes which frame pairs are evaluated, so it cannot fully separate the effect of spacing from differences in visual content.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ───────────────────────── Citation ───────────────────────── -->
+<section class="section" id="citation">
+  <div class="wrap narrow">
+    <h2 class="section-title"><span class="kicker pixel">Cite</span>BibTeX</h2>
+    <!-- TODO: add the arXiv id once available -->
+    <div class="bibtex">
+      <button class="copy" id="copy-bib" type="button" aria-label="Copy BibTeX">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+        <span>Copy</span>
+      </button>
+<pre id="bibtex-text"><code>@inproceedings{colombo2026decodable,
+  title     = {Decodable, Not Transferable: Latent Actions Across Worlds},
+  author    = {Colombo, Alessio and Lee, May and Oey, Elyanne and Kampono, Isabelle A. and
+               Frkovic, Stipe and Varghese, Dheeraj and Snoek, Cees G. M.},
+  booktitle = {NeurIPS 2026 Workshop on From Pretrained Representations to Acting Agents (PTA)},
+  year      = {2026}
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p>
+      Models evaluated: <a href="https://huggingface.co/Little-Podi/AdaWorld" target="_blank" rel="noopener">AdaWorld</a>,
+      <a href="https://huggingface.co/YuxinJ/Olaf-World" target="_blank" rel="noopener">Olaf-World</a>,
+      <a href="https://huggingface.co/EPFL-VILAB/videoflextok_d18_d28" target="_blank" rel="noopener">VideoFlexTok</a>.
+      Data: <a href="https://github.com/Farama-Foundation/stable-retro" target="_blank" rel="noopener">Stable Retro</a>,
+      <a href="https://arxiv.org/abs/2601.04575" target="_blank" rel="noopener">Open Pixels2Play</a>.
+    </p>
+    <p class="muted">This page is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>. Feel free to reuse its source; please link back.</p>
+  </div>
+</footer>
+
+<div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+<script src="static/js/main.js"></script>
+</body>
+</html>
