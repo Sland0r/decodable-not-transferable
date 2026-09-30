@@ -360,12 +360,10 @@
   function initExplorer() {
     const root = $("#umap-explorer");
     if (!root) return;
-    const imgs = $$(".umap-img", root);
+    const img = $(".umap-img", root);
     const legendEl = $("#umap-legend");
     const note = $("#umap-note");
     const state = { enc: "adaworld", color: "games" };
-    let front = 0;
-    const src = () => `static/images/umap/${state.enc}_${state.color}.webp`;
 
     // preload every view so toggling is instant
     Object.keys(ENC_NAMES).forEach((e) => ["games", "actions"].forEach((c) => { const i = new Image(); i.src = `static/images/umap/${e}_${c}.webp`; }));
@@ -379,22 +377,9 @@
           `<li><span class="swatch round" style="background:${c}"></span>${n}</li>`).join("")}</ul>`;
       }
     }
-    function render(first) {
-      const s = src();
-      const alt = `UMAP of ${ENC_NAMES[state.enc]} Retro latents, coloured by ${state.color === "games" ? "game" : "action"}.`;
-      if (first) {
-        imgs[0].src = s; imgs[0].alt = alt;
-      } else {
-        const back = imgs[1 - front];
-        back.onload = () => {
-          back.classList.add("is-on");
-          imgs[front].classList.remove("is-on");
-          front = 1 - front;
-        };
-        back.alt = alt;
-        back.src = s;
-        if (back.complete && back.naturalWidth) back.onload();
-      }
+    function render() {
+      img.src = `static/images/umap/${state.enc}_${state.color}.webp`;
+      img.alt = `UMAP of ${ENC_NAMES[state.enc]} Retro latents, coloured by ${state.color === "games" ? "game" : "action"}.`;
       renderLegend();
       note.textContent = NOTES[state.enc][state.color];
     }
@@ -404,7 +389,7 @@
         if (state[key] === b.dataset[attr]) return;
         state[key] = b.dataset[attr];
         btns.forEach((o) => o.setAttribute("aria-checked", String(o === b)));
-        render(false);
+        render();
       }));
       // arrow-key navigation inside the radiogroup
       btns.forEach((b, i) => b.addEventListener("keydown", (e) => {
@@ -415,7 +400,7 @@
     }
     bind("enc", "enc");
     bind("color", "color");
-    render(true);
+    render();
 
     legend($("#action-legend-static"), ACTIONS.map(([n, c]) => ({ label: n, color: c, round: true })));
   }
