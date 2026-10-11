@@ -259,7 +259,7 @@
         const L = el("text", { class: "end-lbl", x: xA - 12, y: ly[i] + 4, "text-anchor": "end" }, svg);
         L.innerHTML = `<tspan class="muted">${e.name}</tspan> ${p.within[i].toFixed(1)}`;
         const R = el("text", { class: "end-lbl", x: xB + 12, y: ry[i] + 4, "text-anchor": "start" }, svg);
-        const delta = p.delta[i]; // as reported in Table 3 (computed from unrounded accuracies)
+        const delta = p.delta[i]; // as reported in Table 3 
         R.innerHTML = `${p.cross[i].toFixed(1)} <tspan class="delta-lbl">${delta.toFixed(1).replace("-", "−")}</tspan>`;
         // generous hover target
         const hit = el("line", { x1: xA, x2: xB, y1: y(p.within[i]), y2: y(p.cross[i]), stroke: "transparent", "stroke-width": 18 }, svg);
@@ -294,7 +294,7 @@
     animateOnView(host, (t) => updaters.forEach((u) => u(t)), 1100);
   }
 
-  /* ───────────── Table 2 in-cell bars ───────────── */
+  /* Table in-cell bars */
   $$(".data-table.bars td[data-v]").forEach((td) => td.style.setProperty("--p", (+td.dataset.v / 100).toFixed(3)));
 
   /* ───────────── UMAP explorer ───────────── */
@@ -328,34 +328,6 @@
     },
   };
   const ENC_NAMES = { adaworld: "AdaWorld", olafworld: "Olaf-World", videoflextok: "VideoFlexTok" };
-
-  /* Per-game UMAP points, traced from the paper figure: [x, y, actionIndex] in 0..1 plot coords. */
-  const PERGAME = {"jetsonsinvasionoftheplanetpirates":[[0.0642,0.0426,0],[0.1131,0.0706,0],[0.0439,0.1114,0],[0.1597,0.1533,0],[0.1035,0.1704,0],[0.22,0.1725,2],[0.3709,0.2061,3],[0.3338,0.2092,2],[0.416,0.2187,3],[0.0679,0.2263,0],[0.0869,0.273,0],[0.1341,0.2828,0],[0.3247,0.2838,2],[0.37,0.3038,3],[0.4272,0.3114,3],[0.1856,0.3192,0],[0.2941,0.3412,3],[0.1066,0.3628,0],[0.257,0.3772,2],[0.3761,0.386,2],[0.4338,0.4284,3],[0.0857,0.4335,0],[0.1558,0.4373,0],[0.3069,0.4387,3],[0.7072,0.4699,1],[0.7437,0.4909,1],[0.2487,0.5115,3],[0.077,0.5254,0],[0.2987,0.5443,2],[0.7052,0.552,1],[0.1085,0.5785,0],[0.749,0.5881,1],[0.2375,0.5882,2],[0.1685,0.6424,3],[0.3013,0.6544,2],[0.2129,0.7075,3],[0.8167,0.7127,1],[0.8514,0.7427,1],[0.1373,0.7723,3],[0.2368,0.7751,3],[0.1932,0.7939,3],[0.9102,0.8383,1],[0.8484,0.8399,1],[0.2496,0.8505,3],[0.2166,0.8536,3],[0.8339,0.8642,1],[0.8094,0.8824,1],[0.9222,0.9067,1],[0.8831,0.9224,1],[0.9558,0.9428,1],[0.8315,0.9553,1],[0.8568,0.9565,1]],"joeandmac":[[0.6033,0.0427,2],[0.6318,0.0612,0],[0.6994,0.0888,3],[0.7936,0.0999,0],[0.8535,0.1261,2],[0.5738,0.127,0],[0.7263,0.1267,3],[0.7666,0.1295,3],[0.5122,0.1494,1],[0.6373,0.1804,3],[0.9164,0.1911,3],[0.8051,0.1946,3],[0.5726,0.2099,3],[0.851,0.2173,3],[0.7127,0.2371,0],[0.9454,0.2548,3],[0.6442,0.2606,2],[0.5753,0.262,1],[0.479,0.2642,1],[0.7835,0.2712,0],[0.4784,0.29,3],[0.6413,0.2945,0],[0.8013,0.3142,3],[0.8848,0.319,1],[0.9518,0.3298,0],[0.8329,0.3509,0],[0.5234,0.3548,1],[0.711,0.3614,0],[0.6419,0.3699,3],[0.9419,0.3725,0],[0.7861,0.4025,3],[0.937,0.4275,0],[0.4088,0.4297,1],[0.8615,0.434,0],[0.5444,0.454,1],[0.8051,0.4838,0],[0.7437,0.495,1],[0.9558,0.4988,3],[0.6472,0.5362,3],[0.2389,0.5429,1],[0.2174,0.5573,2],[0.8591,0.5579,0],[0.9248,0.577,3],[0.8506,0.5786,3],[0.5459,0.6009,1],[0.3464,0.6223,2],[0.1541,0.652,0],[0.9214,0.6718,0],[0.8591,0.6885,0],[0.6201,0.7085,1],[0.7709,0.7128,1],[0.3123,0.716,0],[0.1971,0.7314,1],[0.165,0.7325,0],[0.0956,0.7366,1],[0.6324,0.7536,1],[0.7484,0.7557,1],[0.0794,0.7561,1],[0.6675,0.7805,1],[0.2907,0.7854,1],[0.2306,0.7897,0],[0.044,0.7914,3],[0.1491,0.7971,2],[0.0835,0.8075,0],[0.6016,0.825,1],[0.7516,0.8269,1],[0.1364,0.8382,1],[0.1691,0.8491,2],[0.6821,0.8596,1],[0.6339,0.8942,1],[0.6513,0.9093,1],[0.5921,0.9566,1]]};
-
-  function drawPerGame() {
-    $$("[data-pergame]").forEach((host) => {
-      const pts = PERGAME[host.dataset.pergame];
-      if (!pts) return;
-      const W = 400, H = 300, pad = 16;
-      const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": host.dataset.label });
-      el("rect", { x: 0.5, y: 0.5, width: W - 1, height: H - 1, rx: 6, fill: "#fff", stroke: "#e4e1d8" }, svg);
-      const dots = pts.map(([x, y, a]) => {
-        const c = el("circle", {
-          class: "bar pg-dot", cx: pad + x * (W - 2 * pad), cy: pad + y * (H - 2 * pad), r: 6,
-          fill: ACTIONS[a][1], stroke: "rgba(23,22,27,.35)", "stroke-width": 0.8,
-        }, svg);
-        c.addEventListener("mousemove", (ev) => {
-          host.classList.add("is-hovering");
-          dots.forEach((d) => d.classList.toggle("is-hot", d.dataset.a === String(a)));
-          showTip(head(ACTIONS[a][1], ACTIONS[a][0]) + `<div class="tt-note">Highlighting every <i>${ACTIONS[a][0]}</i> sample in this game.</div>`, ev.clientX, ev.clientY);
-        });
-        c.addEventListener("mouseleave", () => { host.classList.remove("is-hovering"); hideTip(); });
-        c.dataset.a = a;
-        return c;
-      });
-      host.appendChild(svg);
-    });
-  }
 
   function initExplorer() {
     const root = $("#umap-explorer");
@@ -402,20 +374,7 @@
     bind("color", "color");
     render();
 
-    legend($("#action-legend-static"), ACTIONS.map(([n, c]) => ({ label: n, color: c, round: true })));
   }
-
-  /* ───────────── Tabs ───────────── */
-  $$("[data-tabs]").forEach((tabs) => {
-    const btns = $$("[data-tab]", tabs);
-    btns.forEach((b) => b.addEventListener("click", () => {
-      btns.forEach((o) => {
-        const on = o === b;
-        o.setAttribute("aria-selected", String(on));
-        document.getElementById(o.dataset.tab).hidden = !on;
-      });
-    }));
-  });
 
   /* ───────────── BibTeX copy ───────────── */
   const copyBtn = $("#copy-bib");
@@ -477,5 +436,4 @@
   drawLadder();
   drawSlopes();
   initExplorer();
-  drawPerGame();
 })();

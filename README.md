@@ -2,7 +2,7 @@
 
 Project page for the NeurIPS 2026 Workshop paper (PTA: From Pretrained Representations to Acting Agents).
 
-A plain static site with no build step or dependencies: `index.html`, `static/css/style.css`, `static/js/main.js` and images in `static/images/`.
+A deliberately short, single-scroll static site (TL;DR, setup, Q1–Q3, takeaways, BibTeX; details live in the paper) with no build step or dependencies: `index.html`, `static/css/style.css`, `static/js/main.js` and images in `static/images/`.
 
 ## Preview locally
 
@@ -35,7 +35,6 @@ Search `index.html` for `TODO`:
 | Teaser Q1/Q2/Q3 chart data | `LADDER` in `static/js/main.js` |
 | Seen → unseen slope chart data | `SLOPES` in `static/js/main.js` |
 | UMAP explorer images and notes | `static/images/umap/*.webp`, `NOTES` / `GAMES` in `main.js` |
-| Per-game UMAP points | `PERGAME` in `main.js` (traced from the paper's Figure 9) |
 | Colours | CSS variables at the top of `style.css` (`--ada`, `--olaf`, `--vft`, `--accent`) |
 
 The encoder colours (blue, orange, aqua) were checked for colour-blind separation. The paper's own figures use a blue/orange/green set that fails that check.
