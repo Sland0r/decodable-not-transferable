@@ -25,7 +25,7 @@ Search `index.html` for `TODO`:
 
 - [x] **Authors and affiliations** (hero) and the **BibTeX** author list.
 - [ ] **arXiv** and **Code** buttons: set the `href` and remove the `is-soon` class and the `<span class="soon">` badge.
-- [ ] **Paper PDF**: `static/paper.pdf` is currently the anonymized submission, which still has line numbers and "Do not distribute". Replace it with the camera-ready version.
+- [x] **Paper PDF**: `static/paper.pdf` is the PTA camera-ready version.
 - [ ] **Social preview**: after deploying, change `og:image` to an absolute URL (e.g. `https://…/static/images/social.png`) and add `og:url`.
 
 ## Where things live
